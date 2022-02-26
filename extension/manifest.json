@@ -1,0 +1,27 @@
+{
+  "name": "DiverScholar",
+  "description": "Test",
+  "version": "0.1",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://arxiv.org/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "32": "icon2.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "32": "icon2.png"
+  }
+}
