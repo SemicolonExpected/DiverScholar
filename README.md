@@ -29,4 +29,5 @@ We also hope to be able incorporate more groups and different ways scholars may 
 
 ## Contributions
 Victoria:   Idea, Research and Development, Front End, Documentation
+
 Daniel:     Fairness Algorithm, Backend, Documentation
