@@ -26,3 +26,8 @@ This does not lead to a trade off in quality due to the method we use to "boost"
 
 We hope to be able to expand our functionality to other academic search engines and libraries e.g. Google Scholar, ACM. 
 We also hope to be able incorporate more groups and different ways scholars may be disadvantaged into our algorithm and ultimately uplift all underrepresented groups.
+
+## Contributions
+Victoria:   Idea, Research and Development, Front End, Documentation
+
+Daniel:     Fairness Algorithm, Backend, Documentation

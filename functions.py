@@ -41,5 +41,21 @@ def genderize(name):
             return result
         else:
             return(-1)
+            
+def femaleLed(authors):
+    '''
+    0 - Not Female Led Nor Diverse
+    1 - Female Led
+    2 - Gender Diverse
+    3 - Both Female Led and Gender Diverse
+    '''
+    status = ""
+    if authors[0]["gender"] is 'female':
+        status = {"status" : "female_led", "code":1, "probability": authors[0]['probability']}  # 1 indicates female led
+    if len(author) > 1:
+        #we dont want to do extra calculations if we dont have anything to aggregate
+        print("hello")
+    # check whether gender diverse
+    # if gender diverse check if status != "" then change status to female led and gender diverse (3)
 
 print(genderize(["peter","lois","stewie","peter","lois","stewie","peter","lois"])) 
