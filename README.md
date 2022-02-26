@@ -28,5 +28,5 @@ We hope to be able to expand our functionality to other academic search engines 
 We also hope to be able incorporate more groups and different ways scholars may be disadvantaged into our algorithm and ultimately uplift all underrepresented groups.
 
 ## Contributions
-Victoria:   Idea, Research and Development, Documentation, General Code
-Daniel:     Fairness Algorithm, Backend, General Code
+Victoria:   Idea, Research and Development, Front End, Documentation
+Daniel:     Fairness Algorithm, Backend, Documentation
