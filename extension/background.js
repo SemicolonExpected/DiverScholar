@@ -33,17 +33,26 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 
 function parseResult() {
-    let SERP = document.querySelector("ol.breathe-horizontal");
-    console.log(SERP);
+    let SERP = document.querySelector("ol.breathe-horizontal"); //get all search results
+    //console.log(SERP);
     let results = SERP.children;
     console.log(results);
-    let current = [];
+    //console.log(results[i]); //this is in case they change their layout
+    let titleAuthorPair = []
     for (var i = 0; i < results.length; i++) {
-        current.push(results[i]);
+        let authors = [];
+        let el = results[i].children;
+        let title = el[1].innerHTML.trim();
+        let el2 = el[2].children;
+        for(var j = 1; j < el2.length; j++){
+            authors.push(el2[j].innerHTML);
+        }
+        titleAuthorPair.push({"title": title, "authors": authors});
     }
-    console.log(current[0]);
+    let url = window.location.href;
+    let output = {"url": url, "entries" : titleAuthorPair};
+    console.log(output);
 
     SERP.innerHTML = "";
-
 
 }
