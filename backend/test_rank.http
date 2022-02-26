@@ -1,0 +1,46 @@
+# POST http://localhost:8080/api/ranker
+POST https://dwio-hack-nyu-2022.uc.r.appspot.com/api/score
+Content-Type: application/json
+
+{
+  "user_cookie": {
+    "key": "EXAMPLE_XMLHTTPREQUEST"
+  },
+  "search_url": "blank_url23",
+  "papers": [
+    {
+      "URL": "https://www.google.com2",
+      "Title": "a paper2",
+      "authors": [
+        {
+          "author_link": "https://linkedin2.com",
+          "full_name": "a full name",
+          "first_name": "emily"
+        },
+        {
+          "author_link": "https://linkedin3.com",
+          "full_name": "a full name",
+          "first_name": "robert"
+        }
+      ]
+    },
+    {
+      "URL": "https://www.google.com235",
+      "Title": "different paper",
+      "authors": [
+        {
+          "author_link": "xx",
+          "full_name": "a full name",
+          "first_name": "william"
+        },
+        {
+          "author_link": "zzz",
+          "full_name": "a full name",
+          "first_name": "lauren"
+        }
+      ]
+    }
+  ]
+}
+
+###
