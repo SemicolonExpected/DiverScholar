@@ -24,6 +24,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         chrome.scripting.executeScript({
             target: {tabId: tab.id},
             function: parseResult,
+            function: populateResult,
         });
     }
 
@@ -53,6 +54,20 @@ function parseResult() {
     let output = {"url": url, "entries" : titleAuthorPair};
     console.log(output);
 
-    SERP.innerHTML = "";
+    //SERP.innerHTML = "";
 
+}
+
+function populateResult() {
+    // get result
+    let SERP = document.querySelector("ol.breathe-horizontal");
+    let results = SERP.children;
+
+    let test = [0,1,3,2,4,5] //elissa should be 3
+    for (var i = 0; i < test.length; i++) {
+    	SERP.appendChild(results[test[i]].cloneNode(true))
+    }
+    for (var i = 0; i < test.length; i++) {
+    	SERP.removeChild(SERP.firstElementChild)
+    }
 }
