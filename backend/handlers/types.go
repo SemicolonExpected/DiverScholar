@@ -1,29 +1,33 @@
 package handlers
 
-// Used to store individual papers
+type User struct {
+	Key string `json:"key,omitempty" ,datastore:"key"`
+}
+
 type Paper struct {
-	URL   string
-	Title string
+	Key     int64    `json:"key,omitempty" ,datastore:"key"`
+	URL     string   `json:"url,omitempty" ,datastore:"url,noindex"`
+	Title   string   `json:"title,omitempty" ,datastore:"title,noindex"`
+	Authors []Author `json:"authors,omitempty" ,datastore:"authors,noindex"`
 }
 
-// Used to track a search
 type Search struct {
-	Hash  int64
-	URL   string
-	Pages []string
+	Key    int64   `json:"key,omitempty" ,datastore:"key"`
+	URL    string  `json:"url,omitempty" ,datastore:"url,noindex"`
+	Papers []Paper `json:"pages,omitempty" ,datastore:"papers,noindex"`
+	Ranked []int   `json:"ranked,omitempty" ,datastore:"ranked,noindex"`
 }
 
-// Used to cache full authors
 type Author struct {
-	AuthorLink string // Key
-	FullName   string
-	FirstName  string
-	Metadata   string
+	Key        int64  `json:"key,omitempty" ,datastore:"key"`
+	AuthorLink string `json:"author_link,omitempty" ,datastore:"author_link,noindex"`
+	FullName   string `json:"full_name,omitempty" ,datastore:"full_name,noindex"`
+	FirstName  string `json:"first_name,omitempty" ,datastore:"first_name,noindex"`
+	Score      Name   `json:"score" ,datastore:"score,noindex"`
 }
 
-// Used to cache gendered name results
 type Name struct {
-	FirstName  string // Key
-	Gender     string
-	Confidence float64
+	FirstName  string  `json:"name,omitempty" ,datastore:"key"`
+	Gender     string  `json:"gender,omitempty" ,datastore:"gender,noindex"`
+	Confidence float64 `json:"probability,omitempty" ,datastore:"conf,noindex"`
 }
