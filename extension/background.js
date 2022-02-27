@@ -137,7 +137,7 @@ function parseResult() {
 
 function populateResult() {
     // get result
-    let SERP = document.querySelector("ol.breathe-horizontal");
+    let SERP = document.getElementById("reorderedSERP");
     let results = SERP.children;
 
     let test = [0,1,3,2,4,5] //elissa should be 3
