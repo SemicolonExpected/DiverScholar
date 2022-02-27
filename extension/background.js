@@ -59,23 +59,13 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
         // Send the requests to the API
 
-
-        /*
-        chrome.scripting.executeScript({
-            target: {tabId: tab.id},
-            function: callRanker,
-            args: [cb]
-        });
-
-         */
-
         /*
         chrome.scripting.executeScript({
             target: {tabId: tab.id},
             function: populateResult,
         });
-        */
-        console.log("after");
+
+         */
     }
 });
 
@@ -99,7 +89,7 @@ function parseResult() {
     let reorderedSERP = SERP.cloneNode(true);
     reorderedSERP.id = "reorderedSERP";
     reorderedSERP.hidden = false;
-    //reorderedSERP.style.backgroundColor = "#990000";
+    reorderedSERP.style.backgroundColor = "#990000";
 
     SERP.parentNode.insertBefore(reorderedSERP, SERP.nextSibling);
     SERP.hidden = true;
@@ -157,8 +147,7 @@ function parseResult() {
 
 function populateResult() {
     // get result
-    //let SERP = document.querySelector("ol.breathe-horizontal");
-    let SERP = document.getElementById("reorderedSERP")
+    let SERP = document.getElementById("reorderedSERP");
     let results = SERP.children;
 
     let test = [0,1,3,2,4,5] //elissa should be 3
