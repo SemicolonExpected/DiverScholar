@@ -74,6 +74,7 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 
 	hasher := murmur3.New64()
 
+	log.Println("got paper count:", len(search.Papers))
 	for pos, paper := range search.Papers {
 		hasher.Reset()
 		_, hashErr := hasher.Write([]byte(paper.URL))
@@ -93,18 +94,24 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 	if getErr != nil {
 		log.Println("scorePapersCached didn't find any cached papers:", getErr)
 	}
-
+	log.Println("cache paper len:", len(cachedPapers))
 	var scores = make([]Group, len(search.Papers))
-
+	var toSkip = make(map[int64]bool)
 	for _, paper := range cachedPapers {
 		scores[paperKeyToPos[paper.Key]] = ScorePaper(paper)
-		delete(paperKeyToPos, paper.Key)
+		toSkip[paper.Key] = true
 	}
+
+	log.Println("papercache len after:", len(paperKeyToPos), len(scores))
 
 	var toLoad []*Paper
 	var withKeys []*datastore.Key
 	// remaining we need to go fetch, score, and load...
 	for paperKey, paperPos := range paperKeyToPos {
+		if _, ok := toSkip[paperKey]; ok {
+			log.Println("\tskipping:", paperKey, toSkip[paperKey])
+			continue
+		}
 		paperEntry := Paper{
 			Key:     paperKey,
 			URL:     search.Papers[paperPos].URL,
@@ -114,7 +121,9 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 
 		// check each of the authors
 		for aPos, author := range search.Papers[paperPos].Authors {
+			log.Println("\tchecking author", author.FullName)
 			cachedAuthor, _ := getAuthorCached(ctx, author)
+			log.Println("\t\tgot:", cachedAuthor.FullName)
 			paperEntry.Authors[aPos] = cachedAuthor
 		}
 
@@ -127,7 +136,7 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 	}
 
 	// Load before exit
-	_, putErr := datastore.PutMulti(ctx, withKeys, &toLoad)
+	_, putErr := datastore.PutMulti(ctx, withKeys, toLoad)
 	if putErr != nil {
 		log.Println("scorePapersCached could not load new:", putErr)
 	}
@@ -184,7 +193,7 @@ func getNameCached(ctx context.Context, firstName string) (Name, error) {
 	getErr := datastore.Get(ctx, nameKey, &cachedName)
 	if getErr != nil {
 		client := urlfetch.Client(ctx)
-		client.Timeout = time.Millisecond * 200
+		client.Timeout = time.Millisecond * 1500
 
 		url := fmt.Sprintf(
 			"https://api.genderize.io?name=%s",
@@ -197,6 +206,7 @@ func getNameCached(ctx context.Context, firstName string) (Name, error) {
 			log.Println("getNameCached could not retrieve name score:", err)
 			return Name{}, err
 		}
+		log.Println("genderize response:", resp.StatusCode, resp.Status)
 
 		respBody, _ := ioutil.ReadAll(resp.Body)
 
