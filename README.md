@@ -8,7 +8,7 @@ In an industry where citations and visibility are the keys to career progression
 We hope to mitigate that by increasing the visibility of papers that are either led by women, or have a group of authors with strong female representation by both highlighting as well as boosting papers who meet the aforementioned criteria in academic search results. To do this, we devised a browser extension that would process search results from arxiv and slightly boost the rankings of papers that are women led or with a good ratio of women to men. Because there is a correlation between the search engine ranking of a result and engagement with the result ([Dean 2019](https://backlinko.com/google-ctr-stats)), we hope this will lead to more research done by women being seen in science.
 
 ## How we built it
-
+Our extension is built off javascript, python, and golang. The extension scrapes search results from academic article archive *arxiv.org* and passes it to our back end. The backend uses takes the original rankings and reorders them using a fairness algorithm based off of
 
 ## Challenges we ran into
 One of our concerns was that we would over or underweigh diversity factors leading to a paper being disproportionally ranked compared to its impact and relevance or no change at all. 
@@ -16,7 +16,7 @@ One of our concerns was that we would over or underweigh diversity factors leadi
 [FILL THIS IN PLEASE EXPLAINING THE FAIRNESS ALGO]
 
 Currently we are limited in the amount of articles a day we can classify as being women led or having good female representation by the classifer we use to categorize gender. To mitigate this we implemented a cache so that if a name has been classified before it wouldn't have to be classifed again. This will overtime immensely cut down on the need to classify and therefore not have to worry about hitting the classification limit. Similarly we also have an article specific cache so not only do we not need to classify the author names, but we dont have to do any probability calculations again either!
-We are also limited by the fact that since our weights are based off results of a classifier there will always be a margin of error without scholars self-disclosing as being of a certain gender.
+We are also limited by the fact that since our weights are based off results of a classifier there will always be a margin of error without scholars self-disclosing as being of a certain gender. 
 
 ## Accomplishments that we're proud of
 - Building an app in under 2 days

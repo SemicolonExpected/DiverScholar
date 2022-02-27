@@ -53,12 +53,27 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             args: ["helloz"]
         });
 
+        chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            function: populateResult,
+        });
+
         console.log("after");
     }
 });
 
 
+function callRanker(paperList) {
+	const url = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/score";
+	const http = new XMLHttpRequest();
+	http.open("GET", url);
+	http.send(paperList);
 
+	Http.onreadystatechange = (e) => {
+ 	 console.log(Http.responseText)
+	}
+
+}
 
 function parseResult() {
     let SERP = document.querySelector("ol.breathe-horizontal"); //get all search results
@@ -117,15 +132,18 @@ function parseResult() {
     console.log(output);
     */
 }
+    //callRanker(output);
 
-function callRanker(message) {
-    console.log("in it...", message);
+    //SERP.innerHTML = "";
+    const posturl = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker";
+	const http = new XMLHttpRequest();
+	http.open("POST", posturl);
+	http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+	http.send(JSON.stringify(output));
 
-    chrome.storage.sync.get(['searcherID'], function(result) {
-        console.log("got the searcherID:", result);
-    });
-
-    return "yessir";
+	http.onreadystatechange = (e) => {
+ 	 	console.log(http.responseText)
+	}
 }
 
 
