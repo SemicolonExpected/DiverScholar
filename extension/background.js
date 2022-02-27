@@ -81,7 +81,7 @@ function parseResult() {
     let reorderedSERP = SERP.cloneNode(true);
     reorderedSERP.id = "reorderedSERP";
     reorderedSERP.hidden = false;
-    reorderedSERP.style.backgroundColor = "#990000";
+    //reorderedSERP.style.backgroundColor = "#990000";
 
     SERP.parentNode.insertBefore(reorderedSERP, SERP.nextSibling);
     SERP.hidden = true;
@@ -126,14 +126,14 @@ function populateResult(ranks) {
 
     let test = [0,1,3,2,4,5] //elissa should be 3
     let test1 = [0,0,1,0,0,0]
-    for (var i = 0; i < test.length; i++) {
+    for (var i = 0; i < ranks['ordering'].length; i++) {
     	SERP.appendChild(results[test[i]].cloneNode(true))
     }
-    for (var i = 0; i < test.length; i++) {
+    for (var i = 0; i < ranks['ordering'].length; i++) {
     	SERP.removeChild(SERP.firstElementChild)
     }
     for (var i = 0; i < test.length; i++) {
-    	if(test1[i] == 1){
+    	if(ranks['classes'][i] == 1){
     		temp = document.createElement('span')
     		temp.innerHTML = "<b>&nbsp;<font color='gold' size = '+1'>&#9728;</font> Women Led or Strong Female Representation <font color='gold' size = '+1'>&#9728;</font>&nbsp;</b>";
     		temp.style.backgroundColor = "lavender";
