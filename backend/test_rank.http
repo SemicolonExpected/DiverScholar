@@ -1,5 +1,5 @@
 # POST http://localhost:8080/api/ranker
-POST https://dwio-hack-nyu-2022.uc.r.appspot.com/api/score
+POST https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker
 Content-Type: application/json
 
 {
