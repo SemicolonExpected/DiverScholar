@@ -39,44 +39,56 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 function: parseResult
             },
             (injectionResults) => {
-                console.log(injectionResults);
                 let originalSERP = injectionResults[0].result;
+                chrome.storage.sync.get(['searcherID'],
+                    function(sess) {
+                        let req = originalSERP;
+                        req.user_cookie.key = sess.searcherID;
+
+                        console.log(JSON.stringify(req));
+                        callRanker(req, function(response) {
+                            let rankings = JSON.parse(response);
+                            chrome.storage.sync.set({rankings});
+                            console.log(rankings);
+                        });
+
+                    });
                 chrome.storage.local.set({originalSERP});
                 console.log(originalSERP);
             });
 
         // Send the requests to the API
 
-        /*chrome.scripting.executeScript({
+
+        /*
+        chrome.scripting.executeScript({
             target: {tabId: tab.id},
             function: callRanker,
-            args: ["helloz"]
-        });*/
+            args: [cb]
+        });
 
+         */
+
+        /*
         chrome.scripting.executeScript({
             target: {tabId: tab.id},
             function: populateResult,
         });
-
+        */
         console.log("after");
     }
 });
 
 
-function callRanker(paperList) {
+function callRanker(paperList, callback) {
     const posturl = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker";
-    const http = new XMLHttpRequest();
-    http.open("POST", posturl);
-    //http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    http.send(JSON.stringify(paperList));
-
-    http.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            console.log(responseText);
-       }
-    };
+    fetch(posturl, {
+        body: JSON.stringify(paperList),
+        method: "POST"
+    }).then(r => r.text()).then(r => callback(r));
 
 }
+
 
 function parseResult() {
     let SERP = document.querySelector("ol.breathe-horizontal"); //get all search results
@@ -115,20 +127,14 @@ function parseResult() {
             authors: authors,
         })
     }
-
-    //return papers;
-
-    const posturl = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker";
-    const http = new XMLHttpRequest();
-    http.open("POST", posturl);
-    http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    http.send(JSON.stringify(papers));
-
-    http.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            console.log(http.responseText);
-       }
+    return {
+        user_cookie: {
+            key: "empty",
+        },
+        search_url: window.location.href,
+        papers: papers
     };
+
     // Added some more fields to the parsed <li>s
     /*
     let titleAuthorPair = []
