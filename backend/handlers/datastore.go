@@ -87,21 +87,21 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 		paperKeyToPos[pHash] = pos
 	}
 
-	var cachedPapers []Paper
+	var cachedPapers []*Paper
 
 	getErr := datastore.GetMulti(ctx, paperDsKeys, &cachedPapers)
 	if getErr != nil {
-		log.Println("couldn't get any:", getErr)
+		log.Println("scorePapersCached didn't find any cached papers:", getErr)
 	}
 
 	var scores = make([]Group, len(search.Papers))
 
 	for _, paper := range cachedPapers {
-		scores[paperKeyToPos[paper.Key]] = ScorePaper(&paper)
+		scores[paperKeyToPos[paper.Key]] = ScorePaper(paper)
 		delete(paperKeyToPos, paper.Key)
 	}
 
-	var toLoad []Paper
+	var toLoad []*Paper
 	var withKeys []*datastore.Key
 	// remaining we need to go fetch, score, and load...
 	for paperKey, paperPos := range paperKeyToPos {
@@ -122,15 +122,14 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 		scores[paperPos] = ScorePaper(&paperEntry)
 
 		// Prepare to load cache
-		toLoad = append(toLoad, paperEntry)
+		toLoad = append(toLoad, &paperEntry)
 		withKeys = append(withKeys, paperDsKeys[paperPos])
 	}
 
 	// Load before exit
 	_, putErr := datastore.PutMulti(ctx, withKeys, &toLoad)
 	if putErr != nil {
-		log.Println("error putting remaining uncached papers")
-		log.Println(putErr)
+		log.Println("scorePapersCached could not load new:", putErr)
 	}
 
 	return scores, nil
@@ -167,10 +166,16 @@ func getAuthorCached(ctx context.Context, author Author) (Author, error) {
 }
 
 func getNameCached(ctx context.Context, firstName string) (Name, error) {
+	if len(firstName) < 3 {
+		log.Println("getNameCached first name too short:", firstName)
+		return Name{}, nil
+	}
+
 	hasher := murmur3.New64()
 	hasher.Reset()
 	_, hashErr := hasher.Write([]byte(firstName))
 	if hashErr != nil {
+		log.Println("getNameCached could not hash first name:", hashErr)
 		return Name{}, hashErr
 	}
 	firstHash := int64(hasher.Sum64())
@@ -189,6 +194,7 @@ func getNameCached(ctx context.Context, firstName string) (Name, error) {
 		resp, err := client.Get(url)
 		defer resp.Body.Close()
 		if err != nil {
+			log.Println("getNameCached could not retrieve name score:", err)
 			return Name{}, err
 		}
 
@@ -202,8 +208,7 @@ func getNameCached(ctx context.Context, firstName string) (Name, error) {
 		// load to cache
 		_, putErr := datastore.Put(ctx, nameKey, &cachedName)
 		if putErr != nil {
-			log.Println("could not cache the name")
-			log.Println(putErr)
+			log.Println("getNameCached could not put the name into cache:", putErr)
 		}
 	}
 
