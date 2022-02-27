@@ -48,6 +48,15 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                         console.log(JSON.stringify(req));
                         callRanker(req, function(response) {
                             let rankings = JSON.parse(response);
+
+                            chrome.scripting.executeScript({
+                                target: {tabId: tab.id},
+                                function: populateResult,
+                                args: [rankings]
+                            })
+
+
+
                             chrome.storage.sync.set({rankings});
                             console.log(rankings);
                         });
@@ -56,16 +65,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 chrome.storage.local.set({originalSERP});
                 console.log(originalSERP);
             });
-
-        // Send the requests to the API
-
-        /*
-        chrome.scripting.executeScript({
-            target: {tabId: tab.id},
-            function: populateResult,
-        });
-
-         */
     }
 });
 
@@ -127,8 +126,12 @@ function parseResult() {
 }
 
 
-function populateResult() {
+function populateResult(ranks) {
     // get result
+
+    console.log("HERE!!!");
+    console.log("with ranks:", ranks);
+
     let SERP = document.getElementById("reorderedSERP");
     let results = SERP.children;
 
