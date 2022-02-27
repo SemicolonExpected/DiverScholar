@@ -9,11 +9,8 @@ chrome.runtime.onInstalled.addListener(
                     let searcherID = makeid(32);
                     chrome.storage.sync.set({searcherID});
                     details.value = searcherID;
-                    chrome.cookies.set(details, (cookiez) => {
-                        console.log("set cookie:", cookiez);
-                    });
+                    chrome.cookies.set(details, (cookiez) => {});
                 } else {
-                    console.log("got one:", cookie);
                     let searcherID = cookie.value;
                     chrome.storage.sync.set({searcherID});
                 }
@@ -31,7 +28,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         if (!tab.url.startsWith("https://arxiv.org/search/")) {
             return;
         }
-        console.log(tab.url);
 
         // Parse in the target page, and store the original SERP
         chrome.scripting.executeScript({
@@ -45,7 +41,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                         let req = originalSERP;
                         req.user_cookie.key = sess.searcherID;
 
-                        console.log(JSON.stringify(req));
                         callRanker(req, function(response) {
                             let rankings = JSON.parse(response);
 
@@ -58,12 +53,10 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 
                             chrome.storage.sync.set({rankings});
-                            console.log(rankings);
                         });
 
                     });
                 chrome.storage.local.set({originalSERP});
-                console.log(originalSERP);
             });
     }
 });
@@ -127,10 +120,6 @@ function parseResult() {
 
 
 function populateResult(ranks) {
-    // get result
-
-    console.log("HERE!!!");
-    console.log("with ranks:", ranks);
 
     let SERP = document.getElementById("reorderedSERP");
     let results = SERP.children;
