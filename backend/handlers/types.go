@@ -1,5 +1,31 @@
 package handlers
 
+type Group int
+
+const (
+	MaleOnly Group = iota
+	FemaleLed
+	GenderDiverse
+	FemaleLedDiverse
+	Unknown
+)
+
+func (g Group) String() string {
+	if g == MaleOnly {
+		return "MaleOnly"
+	}
+	if g == FemaleLed {
+		return "FemaleLed"
+	}
+	if g == GenderDiverse {
+		return "GenderDiverse"
+	}
+	if g == FemaleLedDiverse {
+		return "FemaleLedDiverse"
+	}
+	return "Unknown"
+}
+
 type User struct {
 	Key string `json:"key,omitempty" ,datastore:"key"`
 }
@@ -19,11 +45,11 @@ type Search struct {
 }
 
 type Author struct {
-	Key        int64  `json:"key,omitempty" ,datastore:"key"`
-	AuthorLink string `json:"author_link,omitempty" ,datastore:"author_link,noindex"`
-	FullName   string `json:"full_name,omitempty" ,datastore:"full_name,noindex"`
-	FirstName  string `json:"first_name,omitempty" ,datastore:"first_name,noindex"`
-	Score      Name   `json:"score" ,datastore:"score,noindex"`
+	Key          int64  `json:"key,omitempty" ,datastore:"key"`
+	AuthorLink   string `json:"author_link,omitempty" ,datastore:"author_link,noindex"`
+	FullName     string `json:"full_name,omitempty" ,datastore:"full_name,noindex"`
+	FirstName    string `json:"first_name,omitempty" ,datastore:"first_name,noindex"`
+	GenderedName Name   `json:"score" ,datastore:"score,noindex"`
 }
 
 type Name struct {
