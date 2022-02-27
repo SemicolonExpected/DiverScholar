@@ -1,4 +1,9 @@
 
+let switched = true;
+
+chrome.storage.sync.set({switched: switched});
+
+
 chrome.runtime.onInstalled.addListener(
     () => {
         let details = {name: "searcherID", url: "https://dwio-hack-nyu-2022.uc.r.appspot.com/"};
@@ -92,6 +97,8 @@ function parseResult() {
         let authBlock = li.querySelector("p.authors")
             .getElementsByTagName("a");
         let titleBlock = li.querySelector("p.title");
+        let url = li.querySelector("div.is-marginless p.list-title")
+            .getElementsByTagName("a");
 
         let authors = []
         for (let a = 0; a < authBlock.length; a++) {
@@ -102,9 +109,8 @@ function parseResult() {
                 first_name: nameArr[0],
             })
         }
-
         papers.push({
-            URL: document.URL,
+            URL: url[0].href,
             Title: titleBlock.textContent.trim(),
             authors: authors,
         })

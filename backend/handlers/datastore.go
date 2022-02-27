@@ -86,6 +86,7 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 		pHash := int64(hasher.Sum64())
 		paperDsKeys[pos] = datastore.NewKey(ctx, "PAPER", "", pHash, nil)
 		paperKeyToPos[pHash] = pos
+		log.Println("\tinner paper...", pos, pHash, paperDsKeys[pos].String())
 	}
 
 	var cachedPapers []*Paper
@@ -94,7 +95,7 @@ func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 	if getErr != nil {
 		log.Println("scorePapersCached didn't find any cached papers:", getErr)
 	}
-	log.Println("cache paper len:", len(cachedPapers))
+	log.Println("cache paper len:", len(cachedPapers), len(paperKeyToPos))
 	var scores = make([]Group, len(search.Papers))
 	var toSkip = make(map[int64]bool)
 	for _, paper := range cachedPapers {

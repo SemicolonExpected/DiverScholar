@@ -40,7 +40,7 @@ type Paper struct {
 type Search struct {
 	Key    int64   `json:"key,omitempty" ,datastore:"key"`
 	URL    string  `json:"url,omitempty" ,datastore:"url,noindex"`
-	Papers []Paper `json:"pages,omitempty" ,datastore:"papers,noindex"`
+	Papers []Paper `json:"papers,omitempty" ,datastore:"papers,noindex"`
 	Ranked []int   `json:"ranked,omitempty" ,datastore:"ranked,noindex"`
 }
 

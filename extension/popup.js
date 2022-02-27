@@ -1,12 +1,15 @@
 let toggleButton = document.getElementById("tog");
 
+chrome.storage.sync.get("switched", ({switched}) => {
+    toggleButton.checked = switched;
+})
+
 toggleButton.addEventListener("change", async() => {
     let [tab] = await chrome.tabs.query({
         active: true,
         currentWindow: true
     });
-
-    toggleButton.checked
+    chrome.storage.sync.set({switched: toggleButton.checked})
     chrome.scripting.executeScript({
         target: {tabId: tab.id},
         function: swapSERP,
