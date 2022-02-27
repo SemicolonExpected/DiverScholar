@@ -2,14 +2,29 @@
         //it is enabled, do accordingly
     
 
-//let color = "#3aa757";
+chrome.runtime.onInstalled.addListener(
+    () => {
+        let details = {name: "searcherID", url: "https://dwio-hack-nyu-2022.uc.r.appspot.com/"};
+        chrome.cookies.get(
+            details,
+            (cookie) => {
+                if (cookie == null) {
+                    let searcherID = makeid(32);
+                    chrome.storage.sync.set({searcherID});
+                    details.value = searcherID;
+                    chrome.cookies.set(details, (cookiez) => {
+                        console.log("set cookie:", cookiez);
+                    });
+                } else {
+                    console.log("got one:", cookie);
+                    let searcherID = cookie.value;
+                    chrome.storage.sync.set({searcherID});
+                }
+            }
+        );
 
-// chrome.runtime.onInstalled.addListener(
-//     () => {
-//         chrome.storage.sync.set({color});
-//         console.log("default color is %cgreen", `color: ${color}`);
-//     }
-// );
+     }
+ );
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
@@ -63,6 +78,10 @@ function parseResult() {
 
 }
 
+function callRanker(paperList) {
+
+}
+
 function populateResult() {
     // get result
     let SERP = document.querySelector("ol.breathe-horizontal");
@@ -85,4 +104,15 @@ function populateResult() {
     		results[i].children[2].appendChild(temp)
     	}
     }
+}
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
 }

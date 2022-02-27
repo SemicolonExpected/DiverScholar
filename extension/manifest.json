@@ -9,10 +9,12 @@
   "permissions": [
     "storage",
     "scripting",
-    "tabs"
+    "tabs",
+    "cookies"
   ],
   "host_permissions": [
-    "https://arxiv.org/*"
+    "https://arxiv.org/*",
+    "https://dwio-hack-nyu-2022.uc.r.appspot.com/"
   ],
   "action": {
     "default_popup": "popup.html",
