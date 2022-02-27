@@ -3,9 +3,13 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/spaolacci/murmur3"
 	"google.golang.org/appengine/v2/datastore"
+	"google.golang.org/appengine/v2/urlfetch"
+	"io/ioutil"
 	"log"
+	"time"
 )
 
 func upsertUser(ctx context.Context, req *RankRequest) (*datastore.Key, *User, error) {
@@ -64,7 +68,7 @@ func upsertSearch(ctx context.Context, req *RankRequest, user *datastore.Key) (
 
 }
 
-func scorePaperCached(ctx context.Context, search *Search) ([]int, error) {
+func scorePapersCached(ctx context.Context, search *Search) ([]Group, error) {
 	var paperDsKeys = make([]*datastore.Key, len(search.Papers))
 	var paperKeyToPos = make(map[int64]int)
 
@@ -88,17 +92,18 @@ func scorePaperCached(ctx context.Context, search *Search) ([]int, error) {
 	getErr := datastore.GetMulti(ctx, paperDsKeys, &cachedPapers)
 	if getErr != nil {
 		log.Println("couldn't get any:", getErr)
-
 	}
 
-	var scores = make([]int, len(search.Papers))
+	var scores = make([]Group, len(search.Papers))
 
 	for _, paper := range cachedPapers {
-		scores[paperKeyToPos[paper.Key]] = scorePaper(&paper)
+		scores[paperKeyToPos[paper.Key]] = ScorePaper(&paper)
 		delete(paperKeyToPos, paper.Key)
 	}
 
-	// remaining we need to go load...
+	var toLoad []Paper
+	var withKeys []*datastore.Key
+	// remaining we need to go fetch, score, and load...
 	for paperKey, paperPos := range paperKeyToPos {
 		paperEntry := Paper{
 			Key:     paperKey,
@@ -112,8 +117,22 @@ func scorePaperCached(ctx context.Context, search *Search) ([]int, error) {
 			cachedAuthor, _ := getAuthorCached(ctx, author)
 			paperEntry.Authors[aPos] = cachedAuthor
 		}
-		scores[paperPos] = scorePaper(&paperEntry)
+
+		// Score it
+		scores[paperPos] = ScorePaper(&paperEntry)
+
+		// Prepare to load cache
+		toLoad = append(toLoad, paperEntry)
+		withKeys = append(withKeys, paperDsKeys[paperPos])
 	}
+
+	// Load before exit
+	_, putErr := datastore.PutMulti(ctx, withKeys, &toLoad)
+	if putErr != nil {
+		log.Println("error putting remaining uncached papers")
+		log.Println(putErr)
+	}
+
 	return scores, nil
 }
 
@@ -133,8 +152,11 @@ func getAuthorCached(ctx context.Context, author Author) (Author, error) {
 		cachedAuthor.AuthorLink = author.AuthorLink
 		cachedAuthor.FullName = author.FullName
 		cachedAuthor.FirstName = author.FirstName
-		cachedAuthor.Score = *getName(ctx, author.FirstName)
-
+		var nameErr error
+		cachedAuthor.GenderedName, nameErr = getNameCached(ctx, author.FirstName)
+		if nameErr != nil {
+			return Author{}, nameErr
+		}
 		_, putErr := datastore.Put(ctx, authKey, &cachedAuthor)
 		if putErr != nil {
 			log.Println("could not insert author", putErr)
@@ -144,6 +166,46 @@ func getAuthorCached(ctx context.Context, author Author) (Author, error) {
 	return cachedAuthor, nil
 }
 
-func getNameCahced(ctx context.Context) {
+func getNameCached(ctx context.Context, firstName string) (Name, error) {
+	hasher := murmur3.New64()
+	hasher.Reset()
+	_, hashErr := hasher.Write([]byte(firstName))
+	if hashErr != nil {
+		return Name{}, hashErr
+	}
+	firstHash := int64(hasher.Sum64())
+	nameKey := datastore.NewKey(ctx, "NAME", "", firstHash, nil)
+	var cachedName Name
+	getErr := datastore.Get(ctx, nameKey, &cachedName)
+	if getErr != nil {
+		client := urlfetch.Client(ctx)
+		client.Timeout = time.Millisecond * 200
 
+		url := fmt.Sprintf(
+			"https://api.genderize.io?name=%s",
+			firstName,
+		)
+
+		resp, err := client.Get(url)
+		defer resp.Body.Close()
+		if err != nil {
+			return Name{}, err
+		}
+
+		respBody, _ := ioutil.ReadAll(resp.Body)
+
+		err = json.Unmarshal(respBody, &cachedName)
+		if err != nil {
+			return Name{}, err
+		}
+
+		// load to cache
+		_, putErr := datastore.Put(ctx, nameKey, &cachedName)
+		if putErr != nil {
+			log.Println("could not cache the name")
+			log.Println(putErr)
+		}
+	}
+
+	return cachedName, nil
 }
