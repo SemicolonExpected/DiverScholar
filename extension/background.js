@@ -64,10 +64,20 @@ function populateResult() {
     let results = SERP.children;
 
     let test = [0,1,3,2,4,5] //elissa should be 3
+    let test1 = [0,0,1,0,0,0]
     for (var i = 0; i < test.length; i++) {
     	SERP.appendChild(results[test[i]].cloneNode(true))
     }
     for (var i = 0; i < test.length; i++) {
     	SERP.removeChild(SERP.firstElementChild)
+    }
+    for (var i = 0; i < test.length; i++) {
+    	if(test1[i] == 1){
+    		temp = document.createElement('span')
+    		temp.innerHTML = "<b>&nbsp;<font color='gold' size = '+1'>&#9728;</font> Women Led or Strong Female Representation <font color='gold' size = '+1'>&#9728;</font>&nbsp;</b>";
+    		temp.style.backgroundColor = "lavender";
+    		temp.style.borderRadius = "20px";
+    		results[i].children[2].appendChild(temp)
+    	}
     }
 }
