@@ -1,7 +1,4 @@
 
-        //it is enabled, do accordingly
-    
-
 chrome.runtime.onInstalled.addListener(
     () => {
         let details = {name: "searcherID", url: "https://dwio-hack-nyu-2022.uc.r.appspot.com/"};
@@ -26,28 +23,38 @@ chrome.runtime.onInstalled.addListener(
      }
  );
 
+
+
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
-    // console.log(tabId);
-    // console.log(changeInfo);
-    // console.log(tab);
-   //chrome.storage.local.get('enabled', data => {
-    //if (data.enabled) {
-	    if (changeInfo.status === "complete") {
-	        if (!tab.url.startsWith("https://arxiv.org/search/")) {
-	            return;
-	        }
+    if (changeInfo.status === "complete") {
+        if (!tab.url.startsWith("https://arxiv.org/search/")) {
+            return;
+        }
+        console.log(tab.url);
 
-	        console.log(tab.url);
-	        chrome.scripting.executeScript({
-	            target: {tabId: tab.id},
-	            function: parseResult,
-	            function: populateResult,
-	        });
-	    }
-	//} 
-	//});
+        // Parse in the target page, and store the original SERP
+        chrome.scripting.executeScript({
+                target: {tabId: tab.id},
+                function: parseResult
+            },
+            (injectionResults) => {
+                console.log(injectionResults);
+                let originalSERP = injectionResults[0].result;
+                chrome.storage.local.set({originalSERP});
+                console.log(originalSERP);
+            });
 
+        // Send the requests to the API
+
+        chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            function: callRanker,
+            args: ["helloz"]
+        });
+
+        console.log("after");
+    }
 });
 
 
@@ -55,17 +62,52 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 function parseResult() {
     let SERP = document.querySelector("ol.breathe-horizontal"); //get all search results
-    //console.log(SERP);
-    let results = SERP.children;
-    console.log(results);
-    //console.log(results[i]); //this is in case they change their layout
+    if (SERP == null) {
+        return;
+    }
+    SERP.id = "originalSERP";
+    let reorderedSERP = SERP.cloneNode(true);
+    reorderedSERP.id = "reorderedSERP";
+    reorderedSERP.hidden = false;
+    reorderedSERP.style.backgroundColor = "#990000";
+
+    SERP.parentNode.insertBefore(reorderedSERP, SERP.nextSibling);
+    SERP.hidden = true;
+
+    let papers = [];
+    for (let i = 0; i < reorderedSERP.children.length; i++) {
+        let li = reorderedSERP.children[i];
+        let authBlock = li.querySelector("p.authors")
+            .getElementsByTagName("a");
+        let titleBlock = li.querySelector("p.title");
+
+        let authors = []
+        for (let a = 0; a < authBlock.length; a++) {
+            let nameArr = authBlock[a].text.trim().split(" ");
+            authors.push({
+                author_link: authBlock[a].href,
+                full_name: authBlock[a].text.trim(),
+                first_name: nameArr[0],
+            })
+        }
+
+        papers.push({
+            URL: document.URL,
+            Title: titleBlock.textContent.trim(),
+            authors: authors,
+        })
+    }
+
+    return papers;
+    // Added some more fields to the parsed <li>s
+    /*
     let titleAuthorPair = []
     for (var i = 0; i < results.length; i++) {
         let authors = [];
         let el = results[i].children;
         let title = el[1].innerHTML.trim();
         let el2 = el[2].children;
-        for(var j = 1; j < el2.length; j++){
+        for(let j = 1; j < el2.length; j++){
             authors.push(el2[j].innerHTML);
         }
         titleAuthorPair.push({"title": title, "authors": authors});
@@ -73,9 +115,7 @@ function parseResult() {
     let url = window.location.href;
     let output = {"url": url, "entries" : titleAuthorPair};
     console.log(output);
-
-    //SERP.innerHTML = "";
-
+    */
 }
 
 function callRanker(paperList) {
