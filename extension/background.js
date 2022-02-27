@@ -1,36 +1,41 @@
 
+        //it is enabled, do accordingly
+    
 
-let color = "#3aa757";
+//let color = "#3aa757";
 
-chrome.runtime.onInstalled.addListener(
-    () => {
-        chrome.storage.sync.set({color});
-        console.log("default color is %cgreen", `color: ${color}`);
-    }
-);
+// chrome.runtime.onInstalled.addListener(
+//     () => {
+//         chrome.storage.sync.set({color});
+//         console.log("default color is %cgreen", `color: ${color}`);
+//     }
+// );
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
     // console.log(tabId);
     // console.log(changeInfo);
     // console.log(tab);
+   //chrome.storage.local.get('enabled', data => {
+    //if (data.enabled) {
+	    if (changeInfo.status === "complete") {
+	        if (!tab.url.startsWith("https://arxiv.org/search/")) {
+	            return;
+	        }
 
-    if (changeInfo.status === "complete") {
-        if (!tab.url.startsWith("https://arxiv.org/search/")) {
-            return;
-        }
+	        console.log(tab.url);
+	        chrome.scripting.executeScript({
+	            target: {tabId: tab.id},
+	            function: parseResult,
+	            function: populateResult,
+	        });
+	    }
+	//} 
+	//});
 
-        console.log(tab.url);
-        chrome.scripting.executeScript({
-            target: {tabId: tab.id},
-            function: parseResult,
-            function: populateResult,
-        });
-    }
-
+});
 
 
-})
 
 
 function parseResult() {
