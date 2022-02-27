@@ -118,9 +118,17 @@ function parseResult() {
     */
 }
 
-function callRanker(paperList) {
+function callRanker(message) {
+    console.log("in it...", message);
 
+    chrome.storage.sync.get(['searcherID'], function(result) {
+        console.log("got the searcherID:", result);
+    });
+
+    return "yessir";
 }
+
+
 
 function populateResult() {
     // get result
