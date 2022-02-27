@@ -127,7 +127,7 @@ function populateResult(ranks) {
     let test = [0,1,3,2,4,5] //elissa should be 3
     let test1 = [0,0,1,0,0,0]
     for (var i = 0; i < ranks['ordering'].length; i++) {
-    	SERP.appendChild(ranks['ordering'].cloneNode(true))
+    	SERP.appendChild(results[ranks['ordering'][i]].cloneNode(true))
     }
     for (var i = 0; i < ranks['ordering'].length; i++) {
     	SERP.removeChild(SERP.firstElementChild)
