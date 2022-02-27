@@ -49,6 +49,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                         callRanker(req, function(response) {
                             let rankings = JSON.parse(response);
 
+                            console.log(rankings);
+
                             chrome.scripting.executeScript({
                                 target: {tabId: tab.id},
                                 function: populateResult,
