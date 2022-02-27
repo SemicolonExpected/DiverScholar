@@ -124,10 +124,11 @@ function parseResult() {
     http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     http.send(JSON.stringify(papers));
 
-    http.onreadystatechange = (e) => {
-        console.log(http.responseText)
-    }
-
+    http.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log(http.responseText);
+       }
+    };
     // Added some more fields to the parsed <li>s
     /*
     let titleAuthorPair = []
