@@ -30,6 +30,13 @@ We are also limited by the fact that since our weights are based off results of 
 We hope to be able to expand our functionality to other academic search engines and libraries e.g. Google Scholar, ACM. 
 We also hope to be able incorporate more groups and different ways scholars may be disadvantaged into our algorithm and ultimately uplift all underrepresented groups.
 
+## Installation
+Clone this repository and then in google chrome: go to [chrome://extensions/ ](chrome://extensions/)
+
+Click Load unpacked and point to where the extension folder of this repo is located on your computer.
+
+Search something on arxiv.org and watch it go!
+
 
 ## Contributions
 Victoria:   Idea, Research and Development, Front End, Documentation
