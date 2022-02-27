@@ -124,24 +124,6 @@ function parseResult() {
         search_url: window.location.href,
         papers: papers
     };
-
-    // Added some more fields to the parsed <li>s
-    /*
-    let titleAuthorPair = []
-    for (var i = 0; i < results.length; i++) {
-        let authors = [];
-        let el = results[i].children;
-        let title = el[1].innerHTML.trim();
-        let el2 = el[2].children;
-        for(let j = 1; j < el2.length; j++){
-            authors.push(el2[j].innerHTML);
-        }
-        titleAuthorPair.push({"title": title, "authors": authors});
-    }
-    let url = window.location.href;
-    let output = {"url": url, "entries" : titleAuthorPair};
-    console.log(output);
-    */
 }
 
 
