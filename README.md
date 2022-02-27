@@ -8,7 +8,7 @@ In an industry where citations and visibility are the keys to career progression
 We hope to mitigate that by increasing the visibility of papers that are either led by women, or have a group of authors with strong female representation by both highlighting as well as boosting papers who meet the aforementioned criteria in academic search results. To do this, we devised a browser extension that would process search results from arxiv and slightly boost the rankings of papers that are women led or with a good ratio of women to men. Because there is a correlation between the search engine ranking of a result and engagement with the result ([Dean 2019](https://backlinko.com/google-ctr-stats)), we hope this will lead to more research done by women being seen in science.
 
 ## How we built it
-
+Our extension is built off javascript, python, and golang. The extension scrapes search results from academic article archive *arxiv.org* and passes it to our back end. The backend uses takes the original rankings and reorders them using a fairness algorithm based off of
 
 ## Challenges we ran into
 One of our concerns was that we would over or underweigh diversity factors leading to a paper being disproportionally ranked compared to its impact and relevance or no change at all. 
