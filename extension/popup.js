@@ -1,7 +1,6 @@
 let toggleButton = document.getElementById("tog");
 
 toggleButton.addEventListener("change", async() => {
-    console.log("here");
     let [tab] = await chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -13,8 +12,6 @@ toggleButton.addEventListener("change", async() => {
 })
 
 function swapSERP() {
-    console.log("here2");
-
     let original = document.getElementById("originalSERP");
     let reordered = document.getElementsByClassName("reorderedSERP");
 
