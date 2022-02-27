@@ -1,7 +1,8 @@
 module backend
 
-go 1.15
+go 1.16
 
 require (
-	google.golang.org/appengine v1.6.7 // indirect
+	github.com/spaolacci/murmur3 v1.1.0
+	google.golang.org/appengine/v2 v2.0.1
 )
