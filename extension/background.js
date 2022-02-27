@@ -75,7 +75,8 @@ function parseResult() {
     }
     let url = window.location.href;
     let output = {"url": url, "entries" : titleAuthorPair};
-    console.log(output);
+    //console.log(output);
+    callRanker(output)
 
     //SERP.innerHTML = "";
 
