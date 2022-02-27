@@ -47,11 +47,11 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
         // Send the requests to the API
 
-        /*chrome.scripting.executeScript({
+        chrome.scripting.executeScript({
             target: {tabId: tab.id},
             function: callRanker,
             args: ["helloz"]
-        });*/
+        });
 
         chrome.scripting.executeScript({
             target: {tabId: tab.id},
@@ -67,14 +67,12 @@ function callRanker(paperList) {
     const posturl = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker";
     const http = new XMLHttpRequest();
     http.open("POST", posturl);
-    //http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    http.send(JSON.stringify(paperList));
+    http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    http.send(JSON.stringify(output));
 
-    http.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            console.log(responseText);
-       }
-    };
+    http.onreadystatechange = (e) => {
+        console.log(http.responseText)
+    }
 
 }
 
@@ -87,7 +85,7 @@ function parseResult() {
     let reorderedSERP = SERP.cloneNode(true);
     reorderedSERP.id = "reorderedSERP";
     reorderedSERP.hidden = false;
-    //reorderedSERP.style.backgroundColor = "#990000";
+    reorderedSERP.style.backgroundColor = "#990000";
 
     SERP.parentNode.insertBefore(reorderedSERP, SERP.nextSibling);
     SERP.hidden = true;
@@ -116,18 +114,7 @@ function parseResult() {
         })
     }
 
-    //return papers;
-
-    const posturl = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker";
-    const http = new XMLHttpRequest();
-    http.open("POST", posturl);
-    http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    http.send(JSON.stringify(papers));
-
-    http.onreadystatechange = (e) => {
-        console.log(http.responseText)
-    }
-
+    return papers;
     // Added some more fields to the parsed <li>s
     /*
     let titleAuthorPair = []
@@ -150,8 +137,7 @@ function parseResult() {
 
 function populateResult() {
     // get result
-    //let SERP = document.querySelector("ol.breathe-horizontal");
-    let SERP = document.getElementById("reorderedSERP")
+    let SERP = document.querySelector("ol.breathe-horizontal");
     let results = SERP.children;
 
     let test = [0,1,3,2,4,5] //elissa should be 3
