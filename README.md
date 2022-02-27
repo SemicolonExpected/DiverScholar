@@ -11,11 +11,9 @@ We hope to mitigate that by increasing the visibility of papers that are either 
 
 
 ## Challenges we ran into
-One of our concerns was that we would over or underweigh diversity factors leading to a paper being disproportionally ranked compared to its impact or no change at all. 
+One of our concerns was that we would over or underweigh diversity factors leading to a paper being disproportionally ranked compared to its impact and relevance or no change at all. 
 
 [FILL THIS IN PLEASE EXPLAINING THE FAIRNESS ALGO]
-
-This does not lead to a trade off in quality due to the method we use to "boost" a result's ranking.
 
 Currently we are limited in the amount of articles a day we can classify as being women led or having good female representation by the classifer we use to categorize gender. To mitigate this we implemented a cache so that if a name has been classified before it wouldn't have to be classifed again. This will overtime immensely cut down on the need to classify and therefore not have to worry about hitting the classification limit. Similarly we also have an article specific cache so not only do we not need to classify the author names, but we dont have to do any probability calculations again either!
 We are also limited by the fact that since our weights are based off results of a classifier there will always be a margin of error without scholars self-disclosing as being of a certain gender.
