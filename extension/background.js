@@ -1,36 +1,41 @@
 
+        //it is enabled, do accordingly
+    
 
-let color = "#3aa757";
+//let color = "#3aa757";
 
-chrome.runtime.onInstalled.addListener(
-    () => {
-        chrome.storage.sync.set({color});
-        console.log("default color is %cgreen", `color: ${color}`);
-    }
-);
+// chrome.runtime.onInstalled.addListener(
+//     () => {
+//         chrome.storage.sync.set({color});
+//         console.log("default color is %cgreen", `color: ${color}`);
+//     }
+// );
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
     // console.log(tabId);
     // console.log(changeInfo);
     // console.log(tab);
+   //chrome.storage.local.get('enabled', data => {
+    //if (data.enabled) {
+	    if (changeInfo.status === "complete") {
+	        if (!tab.url.startsWith("https://arxiv.org/search/")) {
+	            return;
+	        }
 
-    if (changeInfo.status === "complete") {
-        if (!tab.url.startsWith("https://arxiv.org/search/")) {
-            return;
-        }
+	        console.log(tab.url);
+	        chrome.scripting.executeScript({
+	            target: {tabId: tab.id},
+	            function: parseResult,
+	            function: populateResult,
+	        });
+	    }
+	//} 
+	//});
 
-        console.log(tab.url);
-        chrome.scripting.executeScript({
-            target: {tabId: tab.id},
-            function: parseResult,
-            function: populateResult,
-        });
-    }
-
+});
 
 
-})
 
 
 function parseResult() {
@@ -64,10 +69,20 @@ function populateResult() {
     let results = SERP.children;
 
     let test = [0,1,3,2,4,5] //elissa should be 3
+    let test1 = [0,0,1,0,0,0]
     for (var i = 0; i < test.length; i++) {
     	SERP.appendChild(results[test[i]].cloneNode(true))
     }
     for (var i = 0; i < test.length; i++) {
     	SERP.removeChild(SERP.firstElementChild)
+    }
+    for (var i = 0; i < test.length; i++) {
+    	if(test1[i] == 1){
+    		temp = document.createElement('span')
+    		temp.innerHTML = "<b>&nbsp;<font color='gold' size = '+1'>&#9728;</font> Women Led or Strong Female Representation <font color='gold' size = '+1'>&#9728;</font>&nbsp;</b>";
+    		temp.style.backgroundColor = "lavender";
+    		temp.style.borderRadius = "20px";
+    		results[i].children[2].appendChild(temp)
+    	}
     }
 }
