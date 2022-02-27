@@ -37,8 +37,6 @@ func RankHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("req papers: %+v", req.Papers)
-
 	// 1. Get User or Add
 	// 2. Check if URL is in cache for User -> return if it is
 	// 3. Check which papers have been scored -> score those that haven't been

@@ -3,7 +3,6 @@ package handlers
 import (
 	"golang.org/x/exp/rand"
 	"gonum.org/v1/gonum/stat/sampleuv"
-	"log"
 	"time"
 )
 
@@ -101,7 +100,6 @@ func weightedTake(weights []float64) []int {
 	for i := 0; i < len(weights); i++ {
 		next, ok := w.Take()
 		if !ok || next < 0 {
-			log.Println("error with Take", next)
 			result[i] = i
 		} else {
 			result[i] = next
