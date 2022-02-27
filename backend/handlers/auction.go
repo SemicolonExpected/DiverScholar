@@ -25,9 +25,9 @@ func ScorePaper(paper *Paper) Group {
 
 	if result == -1*len(paper.Authors) {
 		return MaleOnly
-	} else if !fl && -1 < result && result < 1 {
+	} else if !fl && 0 < result && result < 1 {
 		return GenderDiverse
-	} else if fl && -1 < result && result < 1 {
+	} else if fl && 0 < result && result < 1 {
 		return FemaleLedDiverse
 	} else if fl {
 		return FemaleLed
