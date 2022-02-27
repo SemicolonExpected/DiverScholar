@@ -54,7 +54,17 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 });
 
 
+function callRanker(paperList) {
+	const url = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/score";
+	const http = new XMLHttpRequest();
+	http.open("GET", url);
+	http.send(paperList);
 
+	Http.onreadystatechange = (e) => {
+ 	 console.log(Http.responseText)
+	}
+
+}
 
 function parseResult() {
     let SERP = document.querySelector("ol.breathe-horizontal"); //get all search results
@@ -75,16 +85,22 @@ function parseResult() {
     }
     let url = window.location.href;
     let output = {"url": url, "entries" : titleAuthorPair};
-    //console.log(output);
-    callRanker(output)
+    console.log(output);
+    //callRanker(output);
 
     //SERP.innerHTML = "";
+    const posturl = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker";
+	const http = new XMLHttpRequest();
+	http.open("POST", posturl);
+	http.setRequestHeader("Content-Type", "application/json");
+	http.send(JSON.stringify(output));
 
+	Http.onreadystatechange = (e) => {
+ 	 	console.log(http.responseText)
+	}
 }
 
-function callRanker(paperList) {
 
-}
 
 function populateResult() {
     // get result
