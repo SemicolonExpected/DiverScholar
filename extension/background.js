@@ -42,6 +42,9 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	        chrome.scripting.executeScript({
 	            target: {tabId: tab.id},
 	            function: parseResult,
+	        });
+	        chrome.scripting.executeScript({
+	            target: {tabId: tab.id},
 	            function: populateResult,
 	        });
 	    }
