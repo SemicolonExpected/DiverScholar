@@ -1,56 +1,23 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var checkbox = document.querySelector('input[type="checkbox"]');
-    chrome.storage.local.get('enabled', function (result) {
-        if (result.enabled != null) {
-            checkbox.checked = result.enabled;
-        }
+let toggleButton = document.getElementById("tog");
+
+toggleButton.addEventListener("change", async() => {
+    console.log("here");
+    let [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true
     });
-    checkbox.addEventListener('click', function () {
-        console.log(checkbox.checked);
-        chrome.storage.local.set({ 'enabled': checkbox.checked }, function () {
-            console.log("confirmed");
-        });
+    chrome.scripting.executeScript({
+        target: {tabId: tab.id},
+        function: swapSERP,
     });
-});
+})
 
-// var toggle = document.getElementById('tog');
-// var enabled = toggle.checked;
-// var background = chrome.extension.getBackgroundPage();
+function swapSERP() {
+    console.log("here2");
 
-// chrome.storage.local.get('enabled', data => {
-//     //enabled = !!data.enabled;
+    let original = document.getElementById("originalSERP");
+    let reordered = document.getElementsByClassName("reorderedSERP");
 
-//     if(toggle.checked){
-//         enabled = True;
-//     }
-//     else{
-//         enabled = False
-//     }
-// });
-
-// myButton.onclick = () => {
-//     chrome.storage.local.set({enabled:enabled});
-// };
-
-// let changeColor = document.getElementById("changeColor");
-
-// chrome.storage.sync.get("color", ({color}) => {
-//     changeColor.style.backgroundColor = color;
-// })
-
-// changeColor.addEventListener("click", async () => {
-//     let [tab] = await chrome.tabs.query({
-//         active: true,
-//         currentWindow: true
-//     });
-//     chrome.scripting.executeScript({
-//         target: {tabId: tab.id},
-//         function: setPageBackgroundColor,
-//     });
-// });
-
-// function setPageBackgroundColor() {
-//     chrome.storage.sync.get("color", ({color}) => {
-//         document.body.style.backgroundColor = color;
-//     });
-// }
+    original.hidden = !original.hidden;
+    reordered.hidden = !reordered.hidden;
+}
