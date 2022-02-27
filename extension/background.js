@@ -92,10 +92,10 @@ function parseResult() {
     const posturl = "https://dwio-hack-nyu-2022.uc.r.appspot.com/api/ranker";
 	const http = new XMLHttpRequest();
 	http.open("POST", posturl);
-	http.setRequestHeader("Content-Type", "application/json");
+	http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 	http.send(JSON.stringify(output));
 
-	Http.onreadystatechange = (e) => {
+	http.onreadystatechange = (e) => {
  	 	console.log(http.responseText)
 	}
 }
