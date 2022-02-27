@@ -25,6 +25,9 @@ type RankResponse struct {
 func RankHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
+	h := w.Header()
+	h.Set("Access-Control-Allow-Origin", "*")
+
 	var req RankRequest
 
 	decErr := json.NewDecoder(r.Body).Decode(&req)
